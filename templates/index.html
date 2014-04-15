@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+<!doctype html>
+<title>Model results</title>
+{% block content %}
+  <script src="{{ url_for('static', filename='assets/js/d3.v3.min.js') }}" type="text/javascript"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='js/show_model.js') }}"></script>
+  <script> GDMVIEWER.Viewer.init() </script>
+{% endblock %}
