@@ -76,26 +76,27 @@ GDMVIEWER.Viewer = (function() {
     max_flow_value     = 0,
     max_country_size   = 0,
 
-    server_address     = "http://128.40.47.76:5000";
+    server_address     = "http://128.40.47.94:5000";
     // end var
 
     // [ private methods ]
     function createCountriesAndSectors(error, json) {
+        // Request the flows JSON from the server
         var countries = [];
         if (error) {
             console.log("Error:" + error);
         } else {
             console.log("JSON Loaded successfully");
-            max_flow_value = d3.max(json.results, 
+            max_flow_value = d3.max(json.flows, 
                     function(d) { return d.value; });
-            countries = createCountries(json.countries, json.results);
+            countries = createCountries(json.countries, json.flows);
             countries.forEach(function(c) {
                 var sectors = add_xy_to_sectors(c, json.sectors);
                 label_sectors(c, sectors);
-                set_sector_sizes(sectors, json.results);
+                set_sector_sizes(sectors, json.flows);
                 draw_items(sectors, "sector");
             });
-            draw_flows(json.results);
+            draw_flows(json.flows);
         }
     }
 

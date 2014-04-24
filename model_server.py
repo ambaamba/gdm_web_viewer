@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, make_response
 from functools import update_wrapper
 from global_demo_model import GlobalDemoModel, keys_to_items
 import json
@@ -13,9 +13,14 @@ def show_index():
 
 @app.route('/get_flows', methods=['GET'])
 def get_flows():
-    countries = ['USA', 'DEU', 'GBR', 'FRA', 'ESP', 'CHN', 'BRA']
-    sectors = ['Agriculture', 'Food', 'Mining', 'Vehicles', 'Chemicals']
-    return str(model.flows_to_json(model.trade_flows(countries, sectors)))
+    countries = ['USA', 'DEU', 'GBR', 'FRA', 'ESP', 'CHN', 'BRA', 'IND', 'ITA', 'KOR', 'RUS']
+    sectors = ['Agriculture', 'Food', 'Mining', 'Vehicles', 'Chemicals', 'Business Services', 'Paper', 'Wood']
+#    countries = None
+#    sectors = None
+    model_output = model.flows_to_json(model.trade_flows(countries, sectors))
+    response = make_response(model_output)
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
 
 @app.route('/get_countries', methods=['GET'])
 def get_countries():
@@ -31,6 +36,7 @@ def kill_trade_route():
     from_id = request.json['from']
     to_id = request.json['to']
     sector_id = request.json['sector']
+    print "killing trade route from %s to %s in sector %s" % (from_id, to_id, sector_id)
     return model.set_import_propensity(sector=sector_id, from_country=from_id,
             to_country=to_id, value=0)
 
