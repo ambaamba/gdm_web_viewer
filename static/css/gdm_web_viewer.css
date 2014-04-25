@@ -1,3 +1,18 @@
 .dimmed{
     opacity: 0.4;
 }
+
+text{
+  font-family: sans-serif;
+  color: darkgray;
+}
+
+text.sector{
+  opacity: 0.5;
+  font-size: 12;
+}
+
+text.country{
+  opactiy: 0.8;
+  font-size: 22;
+}

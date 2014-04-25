@@ -4,8 +4,12 @@ from global_demo_model import GlobalDemoModel, keys_to_items
 import json
 
 app = Flask(__name__)
+model = None
 
-model = GlobalDemoModel.from_pickle('../../../demo-model/model.gdm')
+def load_model():
+    global model
+    #model = GlobalDemoModel.from_pickle('../../../demo-model/model.gdm')
+    model = GlobalDemoModel.from_pickle('../demo-model/model.gdm')
 
 @app.route('/')
 def show_index():
@@ -40,5 +44,13 @@ def kill_trade_route():
     return model.set_import_propensity(sector=sector_id, from_country=from_id,
             to_country=to_id, value=0)
 
+@app.route('/reset_model', methods=['GET'])
+def reset_model():
+    print "Model is being reset..."
+    load_model()
+    print "Model reset."
+    return "Model reset"
+    
 if __name__ == "__main__":
+    load_model()
     app.run(debug=True, host='0.0.0.0')

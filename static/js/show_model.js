@@ -76,7 +76,7 @@ GDMVIEWER.Viewer = (function() {
     max_flow_value     = 0,
     max_country_size   = 0,
 
-    server_address     = "http://128.40.47.94:5000";
+    server_address     = "http://0.0.0.0:5000";
     // end var
 
     // [ private methods ]
@@ -120,27 +120,36 @@ GDMVIEWER.Viewer = (function() {
             'undefined' ? radius_field : 'r';
         // Set the radius
         placed_items.forEach(function(x) {set_radius(x, radius_field);});
-        var drawn_items = svg.selectAll("circle")
+        var items_with_data = svg.selectAll("circle")
             .data(placed_items, function(d) { return d.name + d.id; });
 
         // Enter
-        drawn_items.enter().append("circle")
+        var new_items = items_with_data.enter()
+            .append("g") // Each circle is in a group with its label
+            .classed(class_name, true)
+            .attr("transform", function(d) {
+                return "translate(" + d.x + "," + d.y + ")";
+            })
             .attr("id", function(d) {return d.id;})
-            .attr("label", function(d) {return d.name;})
+            .attr("x", function(d) { return d.x; }) // Used for drawing paths
+            .attr("y", function(d) { return d.y; })
             .attr("parent_id", function(d) { 
                 if (typeof d.parent_id !== 'undefined') {
                     return d.parent_id;
                 }
-            })
-        .attr("cx", function (d) {return d.x;})
-            .attr("cy", function (d) {return d.y;})
+            });
+         new_items.append("circle")
             .classed(class_name, true)
             .style("fill", class_name === "country" ? "red" : "blue")
-            .attr("r", 0)
+            .attr("r", 0) // Start each circle small and transition up
             .transition().duration(500)
             .attr("r",  function (d) {return d[radius_field];});
+       new_items.append("text")
+            .classed(class_name, true)
+            .attr("text-anchor", "middle")
+            .text(function(d) {return d.name;})
         // Update
-        drawn_items.transition().duration(500)
+        items_with_data.transition().duration(500)
             .attr("r", function(d) {return d[radius_field];});
     }
 
@@ -285,8 +294,8 @@ GDMVIEWER.Viewer = (function() {
         if (d.from !== d.to) {
             from_sector = get_sector_from_ids(d.from, d.sector); 
             to_sector = get_sector_from_ids(d.to, d.sector);
-            points = [[from_sector.attr("cx"), from_sector.attr("cy")],
-                        [to_sector.attr("cx"), to_sector.attr("cy")]];
+            points = [[from_sector.attr("x"), from_sector.attr("y")],
+                        [to_sector.attr("x"), to_sector.attr("y")]];
             return GDMVIEWER.Paths().curve_data(points);
         }
 //        return "M" + from_sector.attr("cx") + "," + from_sector.attr("cy") +
