@@ -76,7 +76,7 @@ GDMVIEWER.Viewer = (function() {
     max_flow_value     = 0,
     max_country_size   = 0,
 
-    server_address     = "http://0.0.0.0:5000";
+    server_address     = "http://localhost:5000";
     // end var
 
     // [ private methods ]
